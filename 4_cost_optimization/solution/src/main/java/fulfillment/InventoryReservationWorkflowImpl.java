@@ -17,13 +17,14 @@ public class InventoryReservationWorkflowImpl implements InventoryReservationWor
     private static final Logger log = Workflow.getLogger(InventoryReservationWorkflowImpl.class);
 
     private static final List<String> WAREHOUSES = Arrays.asList(
-        "WH-INCHEON", "WH-BUCHEON", "WH-DAEJEON"
+        "WH-INCHEON", "WH-BUCHEON", "WH-DAEJEON",
+        "WH-BUSAN",   "WH-GWANGJU", "WH-SEJONG"
     );
 
     private final WarehouseActivities warehouseActivities = Workflow.newActivityStub(
         WarehouseActivities.class,
         ActivityOptions.newBuilder()
-            .setStartToCloseTimeout(Duration.ofSeconds(15))
+            .setStartToCloseTimeout(Duration.ofSeconds(10))
             .build()
     );
 
@@ -31,7 +32,6 @@ public class InventoryReservationWorkflowImpl implements InventoryReservationWor
     public String reserve(String sku, int quantity) {
         log.info("Checking {} warehouses in parallel for SKU {}", WAREHOUSES.size(), sku);
 
-        // Fan out: fire all warehouse checks concurrently
         List<Promise<String>> promises = new ArrayList<>();
         for (String warehouseId : WAREHOUSES) {
             Promise<String> p = Async.function(
@@ -41,10 +41,8 @@ public class InventoryReservationWorkflowImpl implements InventoryReservationWor
             promises.add(p);
         }
 
-        // Wait for all to complete
         Promise.allOf(promises).get();
 
-        // Return first successful reservation
         for (Promise<String> p : promises) {
             String reservationId = p.get();
             if (reservationId != null) {

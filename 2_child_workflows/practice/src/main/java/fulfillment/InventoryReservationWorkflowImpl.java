@@ -14,10 +14,11 @@ public class InventoryReservationWorkflowImpl implements InventoryReservationWor
     private static final Logger log = Workflow.getLogger(InventoryReservationWorkflowImpl.class);
 
     private static final List<String> WAREHOUSES = Arrays.asList(
-        "WH-INCHEON", "WH-BUCHEON", "WH-DAEJEON"
+        "WH-INCHEON", "WH-BUCHEON", "WH-DAEJEON",
+        "WH-BUSAN",   "WH-GWANGJU", "WH-SEJONG"
     );
 
-    // TODO Part A: Create a WarehouseActivities stub with a 15-second StartToCloseTimeout.
+    // TODO Part A: Create a WarehouseActivities stub with a 10-second StartToCloseTimeout.
     private final WarehouseActivities warehouseActivities = null; // replace this
 
     @Override
